@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 2709933712090106644}
   m_Layer: 7
   m_Name: Cylinder (1)
-  m_TagString: Untagged
+  m_TagString: Indicator
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -236,6 +236,7 @@ GameObject:
   - component: {fileID: 2011087940165320089}
   - component: {fileID: 8591077099132386779}
   - component: {fileID: 2321868728962474636}
+  - component: {fileID: 333766276420279146}
   m_Layer: 7
   m_Name: Generic Unit
   m_TagString: Untagged
@@ -441,3 +442,16 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6.77
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &333766276420279146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5386334736454455839}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e57f6505f0defc24290a704fce8a3be7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leaderToFollow: {fileID: 0}

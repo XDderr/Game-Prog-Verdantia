@@ -9,10 +9,13 @@ public class UnitSelection : MonoBehaviour
     //list of gameobjects
     public List<GameObject> allUnitsList = new List<GameObject>();
     public List<GameObject> unitsSelected = new List<GameObject>();
+    public List<GameObject> leadersSelected = new List<GameObject>();
     //references the ground and stuff
     public LayerMask clickable;
     public LayerMask ground;
+    public LayerMask attackable;
     public GameObject groundMarker;
+    public bool attackCursorVisible;
 
     private Camera cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,19 +40,10 @@ public class UnitSelection : MonoBehaviour
         unitsSelected.Add(unit);
         EnableUnitMovement(unit, true);
         SelectIndicator(unit, true);
-    }
-    private void DeselectAll(){
-        foreach(var unit in unitsSelected)
-        {
-            EnableUnitMovement(unit, false);
-            SelectIndicator(unit, false);
+        if(unit.CompareTag("Leader")){
+            unitsSelected.Remove(unit);
+            leadersSelected.Add(unit);
         }
-        unitsSelected.Clear();
-        groundMarker.SetActive(false);
-    }
-
-    private void EnableUnitMovement(GameObject unit, bool shouldMove){
-        unit.GetComponent<UnitMovement>().enabled = shouldMove;
     }
 
     private void MultiSelect(GameObject unit){
@@ -57,11 +51,32 @@ public class UnitSelection : MonoBehaviour
             unitsSelected.Add(unit);
             SelectIndicator(unit, true);
             EnableUnitMovement(unit, true);
-        }else{
+        } 
+        else{
             EnableUnitMovement(unit, false);
             SelectIndicator(unit, false);
             unitsSelected.Remove(unit);
         }
+    }
+
+    private void DeselectAll(){
+        foreach(var unit in unitsSelected)
+        {
+            EnableUnitMovement(unit, false);
+            SelectIndicator(unit, false);
+        }
+        foreach(var unit in leadersSelected)
+        {
+            EnableUnitMovement(unit, false);
+            SelectIndicator(unit, false);
+        }
+        unitsSelected.Clear();
+        leadersSelected.Clear();
+        groundMarker.SetActive(false);
+    }
+
+    private void EnableUnitMovement(GameObject unit, bool shouldMove){
+        unit.GetComponent<UnitMovement>().enabled = shouldMove;
     }
 
     private void SelectIndicator(GameObject unit, bool isVisible){
@@ -74,7 +89,7 @@ public class UnitSelection : MonoBehaviour
         {
             RaycastHit hit;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable))
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable, QueryTriggerInteraction.Ignore))
             {
                 if(Input.GetKey(KeyCode.LeftShift)){
                     MultiSelect(hit.collider.gameObject);
@@ -82,6 +97,12 @@ public class UnitSelection : MonoBehaviour
                 else{
                     SelectByClick(hit.collider.gameObject);
                 }         
+                if(hit.collider.CompareTag("Leader")){
+                    Debug.Log("Leader Hit!");
+                    
+                }
+
+                
             }
         }
 
@@ -94,13 +115,46 @@ public class UnitSelection : MonoBehaviour
         {
             RaycastHit hit;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground))
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground, QueryTriggerInteraction.Ignore))
             {
                 groundMarker.transform.position = hit.point;
                 groundMarker.SetActive(false);
                 groundMarker.SetActive(true);
             }
         }
+        
+        if(unitsSelected.Count > 0 && AtleastOneOffensiveUnit(unitsSelected)){
+            RaycastHit hit;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, attackable, QueryTriggerInteraction.Ignore))
+            {
+                Debug.Log("Enemy Hovered with Mouse");
+                attackCursorVisible = true;
+
+                if(Input.GetMouseButtonDown(0)){
+                    Transform target = hit.transform;
+                    foreach(GameObject unit in unitsSelected){
+                        if(unit.GetComponent<AttackController>()){
+                            unit.GetComponent<AttackController>().targetToAttack = target;
+                        }
+                    }
+                }       
+            }
+            else{
+                attackCursorVisible = false;
+            }
+        }
+
+        
+    }
+
+    private bool AtleastOneOffensiveUnit(List<GameObject> unitsSelected){
+        foreach(GameObject unit in unitsSelected){
+            if(unit.GetComponent<AttackController>()){
+                return true;
+            }
+        }
+        return false;
     }
 
     
