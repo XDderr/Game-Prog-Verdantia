@@ -11,6 +11,7 @@ public class UnitFollowState : StateMachineBehaviour
     {
        attackController = animator.transform.GetComponent<AttackController>();
        agent = animator.transform.GetComponent<UnityEngine.AI.NavMeshAgent>();
+       attackController.SetFollowMaterial();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -20,23 +21,19 @@ public class UnitFollowState : StateMachineBehaviour
         if(attackController.targetToAttack == null){
             animator.SetBool("isFollowing", false);
         }
+        else{
+            if(animator.transform.GetComponent<UnitMovement>().isCommandedtoMove == false){
+                //Moving Unit towards Enemy
+                agent.SetDestination(attackController.targetToAttack.position);
+                animator.transform.LookAt(attackController.targetToAttack);
 
-        //Moving Unit towards Enemy
-        agent.SetDestination(attackController.targetToAttack.position);
-        animator.transform.LookAt(attackController.targetToAttack);
-
-        //Transition to Attack State
-        float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
-        if(distanceFromTarget < attackingDistance){
-            animator.SetBool("isAttacking", true);
+                //Transition to Attack State
+                float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
+                if(distanceFromTarget < attackingDistance){
+                    agent.SetDestination(animator.transform.position);
+                    animator.SetBool("isAttacking", true);
+                }
+            }
         }
- 
-    }
-
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        agent.SetDestination(animator.transform.position);
-        
     }
 }

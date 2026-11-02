@@ -10,6 +10,7 @@ public class UnitSelection : MonoBehaviour
     public List<GameObject> allUnitsList = new List<GameObject>();
     public List<GameObject> unitsSelected = new List<GameObject>();
     public List<GameObject> leadersSelected = new List<GameObject>();
+  
     //references the ground and stuff
     public LayerMask clickable;
     public LayerMask ground;
@@ -101,15 +102,13 @@ public class UnitSelection : MonoBehaviour
                     Debug.Log("Leader Hit!");
                     
                 }
-
-                
             }
         }
 
         if(Input.GetMouseButtonDown(1) && unitsSelected.Count >= 1){
-                DeselectAll();
-                 Debug.Log("Mouse 2 Pressed");
-            }
+            DeselectAll();
+            Debug.Log("Mouse 2 Pressed");
+        }
 
         if(Input.GetMouseButtonDown(0) && unitsSelected.Count > 0)
         {
@@ -143,9 +142,8 @@ public class UnitSelection : MonoBehaviour
             else{
                 attackCursorVisible = false;
             }
+            
         }
-
-        
     }
 
     private bool AtleastOneOffensiveUnit(List<GameObject> unitsSelected){

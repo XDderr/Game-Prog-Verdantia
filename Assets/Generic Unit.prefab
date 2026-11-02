@@ -236,10 +236,9 @@ GameObject:
   - component: {fileID: 2011087940165320089}
   - component: {fileID: 8591077099132386779}
   - component: {fileID: 2321868728962474636}
-  - component: {fileID: 333766276420279146}
   m_Layer: 7
   m_Name: Generic Unit
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -349,6 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d0162e9139e945912ece43080e293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitInfo: {fileID: 11400000, guid: 1c0a9eb2efae9cc4f97e55a3932222cf, type: 2}
 --- !u!114 &6253167875803375338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,6 +364,7 @@ MonoBehaviour:
   ground:
     serializedVersion: 2
     m_Bits: 64
+  isCommandedtoMove: 0
 --- !u!195 &2316294462632078896
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -399,6 +400,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetToAttack: {fileID: 0}
+  idleStateMaterial: {fileID: 2100000, guid: 42f4890ae66b0b8429cabe74ea162a6f, type: 2}
+  followStateMaterial: {fileID: 2100000, guid: 2066c448684a84e4dbc25740188c3367, type: 2}
+  attackStateMaterial: {fileID: 2100000, guid: 13e6c63c9f64eb442bd5742141001d0c, type: 2}
 --- !u!95 &8591077099132386779
 Animator:
   serializedVersion: 7
@@ -442,16 +446,3 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6.77
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &333766276420279146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5386334736454455839}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e57f6505f0defc24290a704fce8a3be7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leaderToFollow: {fileID: 0}

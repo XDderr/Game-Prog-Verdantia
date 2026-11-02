@@ -7,14 +7,15 @@ public class UnitMovement : MonoBehaviour
     NavMeshAgent agent;
     public LayerMask ground;
 
+    public bool isCommandedtoMove;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         cam = Camera.main;
         agent = GetComponent<NavMeshAgent>();
-
     }
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -23,8 +24,13 @@ public class UnitMovement : MonoBehaviour
             RaycastHit hit;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground)){
+                isCommandedtoMove = true;
                 agent.SetDestination(hit.point);
             }
+        }
+
+        if(agent.hasPath == false || agent.remainingDistance <= agent.stoppingDistance){
+            isCommandedtoMove = false;
         }
     }
 }
