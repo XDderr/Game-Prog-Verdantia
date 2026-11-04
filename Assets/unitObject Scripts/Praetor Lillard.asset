@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: Praetor Lillard
   m_EditorClassIdentifier: 
   unitName: Praetor Lillard
+  health: 25
   unitSpeed: 7
   unitDamage: 15
+  unitIcon: {fileID: 0}

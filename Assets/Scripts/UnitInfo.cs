@@ -4,7 +4,8 @@ using UnityEngine;
 public class UnitInfo : ScriptableObject
 {
     public string unitName;
+    public float health;
     public float unitSpeed;
-    public float unitDamage;
+    public int unitDamage;
     public Sprite unitIcon;
 }

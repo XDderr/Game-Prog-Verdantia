@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: Jeremy
   m_EditorClassIdentifier: 
   unitName: Jeremy
+  health: 10
   unitSpeed: 3
   unitDamage: 5
+  unitIcon: {fileID: 0}

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class AttackController : MonoBehaviour
 {
+    private Unit unitInt;
     public Transform targetToAttack;
 
     public Material idleStateMaterial;
@@ -9,6 +10,11 @@ public class AttackController : MonoBehaviour
     public Material attackStateMaterial;
 
     public int unitDamage;
+
+    void Start(){
+        unitInt = GetComponent<Unit>();
+        unitDamage = unitInt.unitInfo.unitDamage;
+    }
     
     private void OnTriggerEnter(Collider other){
         if(other.CompareTag("Enemy") && targetToAttack == null){
@@ -46,7 +52,7 @@ public class AttackController : MonoBehaviour
         //stop attack distance
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, 1.2f);
-        
-        
     }
+    //debug
+    
 }
