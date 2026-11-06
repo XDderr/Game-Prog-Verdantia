@@ -22,9 +22,8 @@ public class UnitAttackState : StateMachineBehaviour
             LookAtTarget();
             //move towards enemy
             agent.SetDestination(attackController.targetToAttack.position);
+            Attack();
 
-            var damageToInflict = attackController.unitDamage;
-            attackController.targetToAttack.GetComponent<Enemy>().RecieveDamage(damageToInflict);
             //should unit still attack
             float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
             if(distanceFromTarget > stopAttackingDistance || attackController.targetToAttack == null){
@@ -39,6 +38,11 @@ public class UnitAttackState : StateMachineBehaviour
 
         var yRotation = agent.transform.eulerAngles.y;
         agent.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+    }
+
+    private void Attack(){
+        var damageToInflict = attackController.unitDamage;
+        attackController.targetToAttack.GetComponent<Unit>().TakeDamage(damageToInflict);
     }
 
     //OnStateExit is called when a transition ends and the state machine finishes evaluating this state

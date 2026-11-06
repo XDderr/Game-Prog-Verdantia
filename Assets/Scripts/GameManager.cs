@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour
     }
     
     private void Update(){
-        foreach(GameObject unit in unitSelection.leadersSelected){
-            Debug.Log("Game Manager: Leader in List");
-        }
+        // foreach(GameObject unit in unitSelection.leadersSelected){
+        //     Debug.Log("Game Manager: Leader in List");
+        // }
     }
 }
