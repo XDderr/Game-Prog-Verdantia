@@ -39,23 +39,25 @@ public class UnitSelection : MonoBehaviour
     private void SelectByClick(GameObject unit){
         DeselectAll();
         unitsSelected.Add(unit);
-        EnableUnitMovement(unit, true);
-        SelectIndicator(unit, true);
+        SelectUnit(unit, true);
         if(unit.CompareTag("Leader")){
             unitsSelected.Remove(unit);
             leadersSelected.Add(unit);
         }
     }
 
+    private void SelectUnit(GameObject unit, bool isSelected){
+        EnableUnitMovement(unit, isSelected);
+        SelectIndicator(unit, isSelected);
+    }
+
     private void MultiSelect(GameObject unit){
         if(unitsSelected.Contains(unit) == false){
+            SelectUnit(unit, true);
             unitsSelected.Add(unit);
-            SelectIndicator(unit, true);
-            EnableUnitMovement(unit, true);
         } 
         else{
-            EnableUnitMovement(unit, false);
-            SelectIndicator(unit, false);
+            SelectUnit(unit, false);
             unitsSelected.Remove(unit);
         }
     }
@@ -63,13 +65,11 @@ public class UnitSelection : MonoBehaviour
     private void DeselectAll(){
         foreach(var unit in unitsSelected)
         {
-            EnableUnitMovement(unit, false);
-            SelectIndicator(unit, false);
+            SelectUnit(unit, false);
         }
         foreach(var unit in leadersSelected)
         {
-            EnableUnitMovement(unit, false);
-            SelectIndicator(unit, false);
+            SelectUnit(unit, false);
         }
         unitsSelected.Clear();
         leadersSelected.Clear();
@@ -153,6 +153,20 @@ public class UnitSelection : MonoBehaviour
             }
         }
         return false;
+    }
+
+    internal void DragSelect(GameObject unit){
+        if(unitsSelected.Contains(unit) == false){
+            unitsSelected.Add(unit);
+            if(unit.CompareTag("Leader")){
+                leadersSelected.Add(unit);
+            }
+            SelectUnit(unit, true);
+        }
+        else{
+            SelectUnit(unit, false);
+            unitsSelected.Remove(unit);
+        }
     }
 
     

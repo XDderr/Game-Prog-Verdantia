@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8100300410873730675}
   - component: {fileID: 3992000358076479972}
   m_Layer: 7
-  m_Name: Cylinder (1)
+  m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,6 +348,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d0162e9139e945912ece43080e293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitInfo: {fileID: 0}
+  healthTracker: {fileID: 0}
 --- !u!114 &6282916081536054292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,6 +365,7 @@ MonoBehaviour:
   ground:
     serializedVersion: 2
     m_Bits: 64
+  isCommandedtoMove: 0
 --- !u!195 &7262948673812856198
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -398,6 +401,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetToAttack: {fileID: 0}
+  idleStateMaterial: {fileID: 0}
+  followStateMaterial: {fileID: 0}
+  attackStateMaterial: {fileID: 0}
+  unitDamage: 0
 --- !u!95 &8753614246887696675
 Animator:
   serializedVersion: 7
