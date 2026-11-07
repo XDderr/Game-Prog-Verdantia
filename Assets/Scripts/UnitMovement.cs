@@ -9,9 +9,12 @@ public class UnitMovement : MonoBehaviour
 
     public bool isCommandedtoMove;
 
+    Animator animator;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        animator = GetComponent<Animator>();
         cam = Camera.main;
         agent = GetComponent<NavMeshAgent>();
     }
@@ -26,11 +29,16 @@ public class UnitMovement : MonoBehaviour
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground)){
                 isCommandedtoMove = true;
                 agent.SetDestination(hit.point);
+                animator.SetBool("isMoving", true);
             }
         }
 
         if(agent.hasPath == false || agent.remainingDistance <= agent.stoppingDistance){
             isCommandedtoMove = false;
+            animator.SetBool("isMoving", false);
+        }
+        else{
+            animator.SetBool("isMoving", true);
         }
     }
 }

@@ -4,6 +4,7 @@ public class AttackController : MonoBehaviour
 {
     private Unit unitInt;
     public Transform targetToAttack;
+    Animator animator;
 
     public Material idleStateMaterial;
     public Material followStateMaterial;
@@ -14,6 +15,7 @@ public class AttackController : MonoBehaviour
     void Start(){
         unitInt = GetComponent<Unit>();
         unitDamage = unitInt.unitInfo.unitDamage;
+        animator = GetComponent<Animator>();
     }
     
     private void OnTriggerEnter(Collider other){
@@ -25,6 +27,7 @@ public class AttackController : MonoBehaviour
     private void OnTriggerExit(Collider other){
         if(other.CompareTag("Enemy") && targetToAttack != null){
             targetToAttack = null;   
+            animator.SetBool("isAttacking", false);
         }
     }
 
