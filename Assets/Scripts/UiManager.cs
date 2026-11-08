@@ -1,21 +1,24 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI; // Required for Image, Slider, Button, etc.
+using TMPro; 
 
 public class UiManager : MonoBehaviour
 {
-    UnitSelection unitSelection;
-    TextMeshProUGUI unitText;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private UnitSelection unitSelect;
+    [SerializeField] private TMP_Text Health;
+    [SerializeField] private Button healthButton;
+    [SerializeField] private Slider volumeSlider;
+
     void Start()
     {
-        unitSelection = GameObject.Find("SelectionManager").GetComponent<UnitSelection>();
+        unitSelect = GetComponent<UnitSelection>();
+        // Accessing and modifying properties directly
+        Health.text = "HP: 100/100";
+        healthButton.onClick.AddListener(OnButtonClicked);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnButtonClicked()
     {
-        foreach(GameObject unit in unitSelection.unitsSelected){
-            // unitText.text = unit;
-        }
+        Debug.Log("Button Clicked!");
     }
 }
