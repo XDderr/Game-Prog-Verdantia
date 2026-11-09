@@ -31,4 +31,8 @@ public class Unit : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public float GetUnitHealth(){
+        return unitHealth;
+    }
 }

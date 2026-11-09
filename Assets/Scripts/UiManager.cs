@@ -5,20 +5,70 @@ using TMPro;
 public class UiManager : MonoBehaviour
 {
     private UnitSelection unitSelect;
-    [SerializeField] private TMP_Text Health;
-    [SerializeField] private Button healthButton;
-    [SerializeField] private Slider volumeSlider;
+    [SerializeField] private TMP_Text unitHealth;
+    [SerializeField] private TMP_Text unitName;
 
-    void Start()
+    private void Update()
     {
-        unitSelect = GetComponent<UnitSelection>();
-        // Accessing and modifying properties directly
-        Health.text = "HP: 100/100";
-        healthButton.onClick.AddListener(OnButtonClicked);
+        UpdateSelectedUnitUI();
     }
 
-    void OnButtonClicked()
+    private void UpdateSelectedUnitUI()
     {
-        Debug.Log("Button Clicked!");
+        // Check if UnitSelection singleton instance exists and has selected units
+        if (UnitSelection.Instance != null && UnitSelection.Instance.unitsSelected.Count > 0)
+        {
+            // Get the first unit in the unitsSelected list
+            GameObject selectedObject = UnitSelection.Instance.unitsSelected[0];
+
+            if (selectedObject != null)
+            {
+                // Fetch the Unit component on the selected GameObject
+                Unit unit = selectedObject.GetComponent<Unit>();
+
+                if (unit != null)
+                {
+                    // Ensure UI text components are active
+                    SetTextVisibility(true);
+
+                    // Get the name from unitInfo ScriptableObject
+                    if (unit.unitInfo != null)
+                    {
+                        unitName.text = unit.unitInfo.unitName;
+                    }
+                    else
+                    {
+                        unitName.text = selectedObject.name;
+                    }
+
+                    // Get current health from Unit component and max health from UnitInfo
+                    if (unit.unitInfo != null)
+                    {
+                        unitHealth.text = $"HP: {unit.GetUnitHealth()} / {unit.unitInfo.health}";
+                    }
+                    else
+                    {
+                        unitHealth.text = $"HP: {unit.GetUnitHealth()}";
+                    }
+
+                    return;
+                }
+            }
+        }
+
+        // If no unit is selected or selected object has no Unit component, clear/hide UI text
+        ClearUI();
+    }
+
+    private void SetTextVisibility(bool isVisible)
+    {
+        if (unitHealth != null) unitHealth.gameObject.SetActive(isVisible);
+        if (unitName != null) unitName.gameObject.SetActive(isVisible);
+    }
+
+    private void ClearUI()
+    {
+        if (unitHealth != null) unitHealth.text = "";
+        if (unitName != null) unitName.text = "";
     }
 }

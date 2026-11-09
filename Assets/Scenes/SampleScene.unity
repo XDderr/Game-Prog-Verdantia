@@ -475,7 +475,7 @@ GameObject:
   - component: {fileID: 402930316}
   - component: {fileID: 402930315}
   m_Layer: 0
-  m_Name: t
+  m_Name: Canvas_block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1121,7 +1121,7 @@ GameObject:
   - component: {fileID: 825461745}
   - component: {fileID: 825461744}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: Instructions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1490,7 +1490,7 @@ GameObject:
   - component: {fileID: 1252015616}
   - component: {fileID: 1252015615}
   m_Layer: 0
-  m_Name: Text (TMP) (1)
+  m_Name: Canvas_HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1704,7 +1704,7 @@ GameObject:
   - component: {fileID: 1367207089}
   - component: {fileID: 1367207088}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: Canvas_UnitName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2567,7 +2567,7 @@ GameObject:
   - component: {fileID: 1683176283}
   - component: {fileID: 1683176282}
   m_Layer: 0
-  m_Name: Text (TMP) (2)
+  m_Name: Canvas_UnitHealth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2737,9 +2737,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33f8001b1258a5b41a5cc2f508e2bd83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: {fileID: 1683176282}
-  healthButton: {fileID: 0}
-  volumeSlider: {fileID: 0}
+  unitHealth: {fileID: 1683176282}
+  unitName: {fileID: 1367207088}
 --- !u!1 &1702081658
 GameObject:
   m_ObjectHideFlags: 0
@@ -5761,11 +5760,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 304095921517704071, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 304095921517704071, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 469412864421981806, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
       propertyPath: m_Layer
@@ -5839,6 +5838,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 4442191971667576066, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4442191971667576066, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4442191971667576066, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5388602171609668232, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
       propertyPath: m_Name
       value: Enemy
@@ -5846,6 +5857,10 @@ PrefabInstance:
     - target: {fileID: 5388602171609668232, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5388602171609668232, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6038165946279928871, guid: d3380eaad77f66049bb4b005235acb5e, type: 3}
       propertyPath: m_Layer

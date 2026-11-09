@@ -41,7 +41,6 @@ public class UnitSelection : MonoBehaviour
         unitsSelected.Add(unit);
         SelectUnit(unit, true);
         if(unit.CompareTag("Leader")){
-            unitsSelected.Remove(unit);
             leadersSelected.Add(unit);
         }
     }
