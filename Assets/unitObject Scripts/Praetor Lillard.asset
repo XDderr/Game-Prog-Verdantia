@@ -16,4 +16,4 @@ MonoBehaviour:
   health: 25
   unitSpeed: 7
   unitDamage: 15
-  unitIcon: {fileID: 0}
+  unitIcon: {fileID: 21300000, guid: 4dac30858ab957543ae9aacdc8b8ae4f, type: 3}
