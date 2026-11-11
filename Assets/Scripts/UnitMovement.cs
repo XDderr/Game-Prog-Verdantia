@@ -40,5 +40,19 @@ public class UnitMovement : MonoBehaviour
         else{
             animator.SetBool("isMoving", true);
         }
+
+        if(Input.GetMouseButtonDown(1)){
+            unitHalt(true);
+        }
+    }
+
+    public void unitHalt(bool haltInput){
+        if(haltInput){
+            agent.velocity = Vector3.zero;
+        }
+        else{
+            return;
+        }
+        
     }
 }
