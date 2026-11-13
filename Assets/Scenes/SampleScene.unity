@@ -1785,7 +1785,7 @@ MonoBehaviour:
     Right Click - Deselect all units
 
     Hold and Drag
-    Left Click - Box Select
+    Middle Mouse - Box Select
 
 '
   m_isRightToLeft: 0

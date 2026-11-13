@@ -25,7 +25,7 @@ public class UnitSelectionBox : MonoBehaviour
     private void Update()
     {
         // When Clicked
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(2))
         {
             startPosition = Input.mousePosition;
  
@@ -34,7 +34,7 @@ public class UnitSelectionBox : MonoBehaviour
         }
  
         // When Dragging
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(2))
         {
             endPosition = Input.mousePosition;
             DrawVisual();
@@ -42,7 +42,7 @@ public class UnitSelectionBox : MonoBehaviour
         }
  
         // When Releasing
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(2))
         {
             SelectUnits();
  
