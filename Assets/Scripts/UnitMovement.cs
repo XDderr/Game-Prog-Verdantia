@@ -7,6 +7,8 @@ public class UnitMovement : MonoBehaviour
     NavMeshAgent agent;
     public LayerMask ground;
 
+    DirectionIndicator directionIndicator;
+
     public bool isCommandedtoMove;
 
     Animator animator;
@@ -17,6 +19,7 @@ public class UnitMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         cam = Camera.main;
         agent = GetComponent<NavMeshAgent>();
+        directionIndicator = GetComponent<DirectionIndicator>();
     }
     
     // Update is called once per frame
@@ -30,6 +33,8 @@ public class UnitMovement : MonoBehaviour
                 isCommandedtoMove = true;
                 agent.SetDestination(hit.point);
                 animator.SetBool("isMoving", true);
+
+                directionIndicator.DrawLine(hit);
             }
         }
 

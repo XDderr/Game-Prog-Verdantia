@@ -143,6 +143,26 @@ public class UnitSelection : MonoBehaviour
             }
             
         }
+
+        CursorSelector();
+    }
+
+    private void CursorSelector(){
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable)){
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Selectable);
+        }
+        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, attackable)){
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Attackable);
+        }
+        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground) && unitsSelected.Count > 0){
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Walkable);
+        }
+        else{
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.None);
+        }
+
     }
 
     private bool AtleastOneOffensiveUnit(List<GameObject> unitsSelected){
