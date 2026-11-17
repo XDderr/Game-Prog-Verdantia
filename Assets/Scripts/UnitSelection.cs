@@ -150,13 +150,13 @@ public class UnitSelection : MonoBehaviour
     private void CursorSelector(){
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable)){
+        if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable, QueryTriggerInteraction.Ignore)){
             CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Selectable);
         }
-        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, attackable)){
+        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, attackable, QueryTriggerInteraction.Ignore)){
             CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Attackable);
         }
-        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground) && unitsSelected.Count > 0){
+        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground, QueryTriggerInteraction.Ignore) && unitsSelected.Count > 0){
             CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Walkable);
         }
         else{
