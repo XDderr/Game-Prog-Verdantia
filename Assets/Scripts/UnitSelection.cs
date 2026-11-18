@@ -1,0 +1,192 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class UnitSelection : MonoBehaviour
+{
+
+    public static UnitSelection Instance { get; set; }
+
+    //list of gameobjects
+    public List<GameObject> allUnitsList = new List<GameObject>();
+    public List<GameObject> unitsSelected = new List<GameObject>();
+    public List<GameObject> leadersSelected = new List<GameObject>();
+  
+    //references the ground and stuff
+    public LayerMask clickable;
+    public LayerMask ground;
+    public LayerMask attackable;
+    public GameObject groundMarker;
+    public bool attackCursorVisible;
+
+    private Camera cam;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake(){
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
+    private void Start()
+    {
+        cam = Camera.main;
+    }
+
+    private void SelectByClick(GameObject unit){
+        DeselectAll();
+        unitsSelected.Add(unit);
+        SelectUnit(unit, true);
+        if(unit.CompareTag("Leader")){
+            leadersSelected.Add(unit);
+        }
+    }
+
+    private void SelectUnit(GameObject unit, bool isSelected){
+        EnableUnitMovement(unit, isSelected);
+        SelectIndicator(unit, isSelected);
+    }
+
+    private void MultiSelect(GameObject unit){
+        if(unitsSelected.Contains(unit) == false){
+            SelectUnit(unit, true);
+            unitsSelected.Add(unit);
+        } 
+        else{
+            SelectUnit(unit, false);
+            unitsSelected.Remove(unit);
+        }
+    }
+
+    private void DeselectAll(){
+        foreach(var unit in unitsSelected)
+        {
+            SelectUnit(unit, false);
+        }
+        foreach(var unit in leadersSelected)
+        {
+            SelectUnit(unit, false);
+        }
+        unitsSelected.Clear();
+        leadersSelected.Clear();
+        groundMarker.SetActive(false);
+    }
+
+    private void EnableUnitMovement(GameObject unit, bool shouldMove){
+        unit.GetComponent<UnitMovement>().enabled = shouldMove;
+    }
+
+    private void SelectIndicator(GameObject unit, bool isVisible){
+        unit.transform.Find("Indicator").gameObject.SetActive(isVisible);
+    }
+
+    private void Update()
+    {
+        if(Input.GetMouseButtonDown(2))
+        {
+            RaycastHit hit;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable, QueryTriggerInteraction.Ignore))
+            {
+                if(Input.GetKey(KeyCode.LeftShift)){
+                    MultiSelect(hit.collider.gameObject);
+                }
+                else{
+                    SelectByClick(hit.collider.gameObject);
+                }         
+                if(hit.collider.CompareTag("Leader")){
+                    Debug.Log("Leader Hit!");
+                    
+                }
+            }
+        }
+
+        if(Input.GetMouseButtonDown(1) && unitsSelected.Count >= 1){
+            DeselectAll();
+            Debug.Log("Mouse 2 Pressed");
+        }
+
+        if(Input.GetMouseButtonDown(0) && unitsSelected.Count > 0)
+        {
+            RaycastHit hit;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground, QueryTriggerInteraction.Ignore))
+            {
+                groundMarker.transform.position = hit.point;
+                groundMarker.SetActive(false);
+                groundMarker.SetActive(true);
+            }
+        }
+        
+        if(unitsSelected.Count > 0 && AtleastOneOffensiveUnit(unitsSelected)){
+            RaycastHit hit;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, attackable, QueryTriggerInteraction.Ignore))
+            {
+                Debug.Log("Enemy Hovered with Mouse");
+                attackCursorVisible = true;
+
+                if(Input.GetMouseButtonDown(0)){
+                    Transform target = hit.transform;
+                    foreach(GameObject unit in unitsSelected){
+                        if(unit.GetComponent<AttackController>()){
+                            unit.GetComponent<AttackController>().targetToAttack = target;
+                        }
+                    }
+                }       
+            }
+            else{
+                attackCursorVisible = false;
+            }
+            
+        }
+
+        CursorSelector();
+    }
+
+    private void CursorSelector(){
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, Mathf.Infinity, clickable, QueryTriggerInteraction.Ignore)){
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Selectable);
+        }
+        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, attackable, QueryTriggerInteraction.Ignore)){
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Attackable);
+        }
+        else if(Physics.Raycast(ray, out hit, Mathf.Infinity, ground, QueryTriggerInteraction.Ignore) && unitsSelected.Count > 0){
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.Walkable);
+        }
+        else{
+            CursorManager.Instance.SetMarkerType(CursorManager.CursorType.None);
+        }
+
+    }
+
+    private bool AtleastOneOffensiveUnit(List<GameObject> unitsSelected){
+        foreach(GameObject unit in unitsSelected){
+            if(unit.GetComponent<AttackController>()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal void DragSelect(GameObject unit){
+        if(unitsSelected.Contains(unit) == false){
+            unitsSelected.Add(unit);
+            if(unit.CompareTag("Leader")){
+                leadersSelected.Add(unit);
+            }
+            SelectUnit(unit, true);
+        }
+        else{
+            SelectUnit(unit, false);
+            unitsSelected.Remove(unit);
+        }
+    }
+
+    
+}

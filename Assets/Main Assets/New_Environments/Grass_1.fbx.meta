@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Main Assets/New_Environments/Grass_1.fbx.meta
 guid: 0f94ee83e4827524d977edc08e0a6b4e
+========
+guid: 46e0c929f26906943b4c00e621c111a8
+>>>>>>>> 05c8250edb89557621c0741415c9462a25897bef:Assets/Main Assets/New_Environments/MAP BRUSHES/Animations/Idle.fbx.meta
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
