@@ -1855,6 +1855,18 @@ PrefabInstance:
       propertyPath: facingCamera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6171146850500040549, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
       propertyPath: m_Name
       value: UnitUI
@@ -4537,6 +4549,18 @@ PrefabInstance:
       propertyPath: facingCamera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6171146850500040549, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
       propertyPath: m_Name
       value: UnitUI
@@ -5598,6 +5622,18 @@ PrefabInstance:
       propertyPath: facingCamera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6171146850500040549, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
       propertyPath: m_Name
       value: UnitUI
@@ -5711,6 +5747,18 @@ PrefabInstance:
       propertyPath: facingCamera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119339304417758127, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6171146850500040549, guid: c0fb8fcb57b244e4eb6dbc7b287d77cf, type: 3}
       propertyPath: m_Name
       value: UnitUI
@@ -7365,7 +7413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d0162e9139e945912ece43080e293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitInfo: {fileID: 11400000, guid: 77d247c288c9bf64bb737902d60d4ede, type: 2}
+  unitInfo: {fileID: 0}
   healthTracker: {fileID: 0}
 --- !u!95 &4175357230237041980
 Animator:
