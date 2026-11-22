@@ -55,7 +55,32 @@ public class RTSCameraController : MonoBehaviour
         newPosition = transform.position;
         defaultY = transform.position.y; // Record the initial Y level to return to
         movementSpeed = normalSpeed;
+
+        LoadCameraSettings();
     }
+
+    public void LoadCameraSettings()
+    {
+        // Reads saved PlayerPrefs; falls back to the Inspector's default value if not yet saved
+        moveWithKeyboad = PlayerPrefs.GetInt(CameraSettingsUI.KEY_KEYBOARD, moveWithKeyboad ? 1 : 0) == 1;
+        moveWithEdgeScrolling = PlayerPrefs.GetInt(CameraSettingsUI.KEY_EDGE_SCROLL, moveWithEdgeScrolling ? 1 : 0) == 1;
+        moveWithMouseDrag = PlayerPrefs.GetInt(CameraSettingsUI.KEY_MOUSE_DRAG, moveWithMouseDrag ? 1 : 0) == 1;
+    }
+
+    public void SetMoveWithKeyboard(bool value) => moveWithKeyboad = value;
+
+    public void SetMoveWithEdgeScrolling(bool value)
+    {
+        moveWithEdgeScrolling = value;
+        if (!value)
+        {
+            // Reset edge-scroll cursor arrow back to default if disabled mid-game
+            ChangeCursor(CursorArrow.DEFAULT);
+            isCursorSet = false;
+        }
+    }
+
+    public void SetMoveWithMouseDrag(bool value) => moveWithMouseDrag = value;
  
     private void Update()
     {
@@ -219,7 +244,7 @@ public class RTSCameraController : MonoBehaviour
  
     private void HandleMouseDragInput()
     {
-        if (Input.GetMouseButtonDown(2) && EventSystem.current.IsPointerOverGameObject() == false)
+        if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject() == false)
         {
             Plane plane = new Plane(Vector3.up, Vector3.zero);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -229,7 +254,7 @@ public class RTSCameraController : MonoBehaviour
                 dragStartPosition = ray.GetPoint(entry);
             }
         }
-        if (Input.GetMouseButton(2) && EventSystem.current.IsPointerOverGameObject() == false)
+        if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject() == false)
         {
             Plane plane = new Plane(Vector3.up, Vector3.zero);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
