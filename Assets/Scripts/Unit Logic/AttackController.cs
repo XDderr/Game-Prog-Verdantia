@@ -1,10 +1,10 @@
-    using UnityEngine;
+using UnityEngine;
 
 public class AttackController : MonoBehaviour
 {
     private Unit unitInt;
     public Transform targetToAttack;
-    Animator animator;
+    private Animator animator;
 
     public Material idleStateMaterial;
     public Material followStateMaterial;
@@ -12,50 +12,52 @@ public class AttackController : MonoBehaviour
 
     public int unitDamage;
 
-    void Start(){
+    void Start()
+    {
         unitInt = GetComponent<Unit>();
         unitDamage = unitInt.unitInfo.unitDamage;
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>(); // Finds Animator on child Mixamo model
     }
     
-    private void OnTriggerEnter(Collider other){
-        if(other.CompareTag("Enemy") && targetToAttack == null){
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy") && targetToAttack == null)
+        {
             targetToAttack = other.transform;
         }
     }
 
-    private void OnTriggerExit(Collider other){
-        if(other.CompareTag("Enemy") && targetToAttack != null){
-            targetToAttack = null;   
-            animator.SetBool("isAttacking", false);
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Enemy") && targetToAttack != null)
+        {
+            targetToAttack = null;
+            if (animator != null) animator.SetBool("isAttacking", false);
         }
     }
 
+    // Called by the Animation Event on the exact impact frame of the attack clip
+    public void DealDamage()
+    {
+        if (targetToAttack == null) return;
 
-    //debug
-    public void SetIdleMaterial(){
-        GetComponent<Renderer>().material = idleStateMaterial;
-    }
-    public void SetFollowMaterial(){
-        GetComponent<Renderer>().material = followStateMaterial;
-    }
-    public void SetAttackMaterial(){
-        GetComponent<Renderer>().material = attackStateMaterial;
+        Unit targetUnit = targetToAttack.GetComponent<Unit>();
+        if (targetUnit != null)
+        {
+            targetUnit.TakeDamage(unitDamage);
+        }
     }
 
-    private void OnDrawGizmos(){
-        //follow
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, 6.77f * 0.5f);
-        
-        //attack
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 1f);
-
-        //stop attack distance
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, 1.2f);
+    public void SetIdleMaterial()
+    {
+        if (TryGetComponent<Renderer>(out var rend)) rend.material = idleStateMaterial;
     }
-    //debug
-    
+    public void SetFollowMaterial()
+    {
+        if (TryGetComponent<Renderer>(out var rend)) rend.material = followStateMaterial;
+    }
+    public void SetAttackMaterial()
+    {
+        if (TryGetComponent<Renderer>(out var rend)) rend.material = attackStateMaterial;
+    }
 }

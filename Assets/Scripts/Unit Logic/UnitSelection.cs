@@ -18,6 +18,7 @@ public class UnitSelection : MonoBehaviour
     public GameObject groundMarker;
     public bool attackCursorVisible;
 
+
     private Camera cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake(){
@@ -28,6 +29,16 @@ public class UnitSelection : MonoBehaviour
         else
         {
             Instance = this;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (UnitSelection.Instance != null)
+        {
+            UnitSelection.Instance.allUnitsList.Remove(gameObject);
+            UnitSelection.Instance.unitsSelected.Remove(gameObject);
+            UnitSelection.Instance.leadersSelected.Remove(gameObject);
         }
     }
 
@@ -188,5 +199,4 @@ public class UnitSelection : MonoBehaviour
         }
     }
 
-    
 }

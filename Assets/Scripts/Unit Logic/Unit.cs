@@ -16,7 +16,12 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
-        UnitSelection.Instance.allUnitsList.Remove(gameObject);
+        if (UnitSelection.Instance != null)
+        {
+            UnitSelection.Instance.allUnitsList.Remove(gameObject);
+            UnitSelection.Instance.unitsSelected.Remove(gameObject);
+            UnitSelection.Instance.leadersSelected.Remove(gameObject);
+        }
     }
 
     public void TakeDamage(int damageToInflict){

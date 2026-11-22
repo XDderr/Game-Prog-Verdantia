@@ -6,7 +6,8 @@ public class UnitIdleState : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       attackController = animator.transform.GetComponent<AttackController>();
+       // In UnitIdleState.cs OnStateEnter:
+      attackController = animator.GetComponentInParent<AttackController>();
        attackController.SetIdleMaterial();
     }
 

@@ -9,8 +9,9 @@ public class UnitFollowState : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       attackController = animator.transform.GetComponent<AttackController>();
-       agent = animator.transform.GetComponent<UnityEngine.AI.NavMeshAgent>();
+       // In UnitFollowState.cs OnStateEnter:
+        attackController = animator.GetComponentInParent<AttackController>();
+        agent = animator.GetComponentInParent<UnityEngine.AI.NavMeshAgent>();
        attackController.SetFollowMaterial();
     }
 

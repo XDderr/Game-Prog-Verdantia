@@ -11,6 +11,7 @@ public class RTSCameraController : MonoBehaviour
     Vector3 newPosition;
     Vector3 dragStartPosition;
     Vector3 dragCurrentPosition;
+    float defaultY; // Stores the parent rig's baseline Y coordinate
 
     [Header("Collision & Terrain Bounds")]
     [Tooltip("Select BOTH your Terrain layer and your 'terrain assets' layer here.")]
@@ -52,6 +53,7 @@ public class RTSCameraController : MonoBehaviour
     {
         instance = this;
         newPosition = transform.position;
+        defaultY = transform.position.y; // Record the initial Y level to return to
         movementSpeed = normalSpeed;
     }
  
@@ -78,6 +80,9 @@ public class RTSCameraController : MonoBehaviour
  
     void HandleCameraMovement()
     {
+        // Reset target Y to the baseline height each frame so it settles back down when space opens up
+        newPosition.y = defaultY;
+
         // Mouse Drag
         if (moveWithMouseDrag)
         {
@@ -151,7 +156,7 @@ public class RTSCameraController : MonoBehaviour
             }
         }
 
-        // Prevent newPosition from clipping into terrain or terrain assets before lerping
+        // Push up over geometry if needed, or let it drop back down to defaultY
         ApplyCollisionAndTerrainBounds();
  
         transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementSensitivity);
@@ -161,21 +166,19 @@ public class RTSCameraController : MonoBehaviour
 
     private void ApplyCollisionAndTerrainBounds()
     {
-        // 1. Horizontal Obstacle Check (Prevents passing through rocks, trees, and steep hills)
+        // 1. Horizontal Obstacle Check (Prevents passing horizontally through rocks, trees, and steep hills)
         Vector3 moveVector = newPosition - transform.position;
         float moveDistance = moveVector.magnitude;
 
         if (moveDistance > 0.001f)
         {
-            // Cast a sphere from current position toward newPosition, ignoring trigger colliders
             if (Physics.SphereCast(transform.position, cameraCollisionRadius, moveVector.normalized, out RaycastHit hit, moveDistance, obstacleLayers, QueryTriggerInteraction.Ignore))
             {
-                // Stop the target position right at the point of contact
                 newPosition = transform.position + (moveVector.normalized * hit.distance);
             }
         }
 
-        // 2. Vertical Terrain Floor Check (Prevents sinking below the terrain surface)
+        // 2. Vertical Geometry Check (Pushes Y upward over terrain/assets, otherwise stays at defaultY)
         Vector3 rayOrigin = new Vector3(newPosition.x, newPosition.y + maxRaycastHeight, newPosition.z);
         if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit groundHit, maxRaycastHeight * 2f, obstacleLayers, QueryTriggerInteraction.Ignore))
         {
@@ -235,6 +238,7 @@ public class RTSCameraController : MonoBehaviour
             {
                 dragCurrentPosition = ray.GetPoint(entry);
                 newPosition = transform.position + dragStartPosition - dragCurrentPosition;
+                newPosition.y = defaultY; // Ensure mouse drag preserves the baseline Y target
             }
         }
     }

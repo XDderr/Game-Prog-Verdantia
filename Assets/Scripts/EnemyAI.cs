@@ -5,40 +5,51 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     [Header("Data & References")]
-    [SerializeField] private UnitInfo enemyInfo; // Optional: pulls unitSpeed if assigned
-    [SerializeField] private LayerMask playerUnitLayer; // Set to the layer your player units are on
+    [SerializeField] private UnitInfo enemyInfo; // Pulls unitSpeed and unitDamage
+    [SerializeField] private LayerMask playerUnitLayer;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator; // Assign the Mixamo model's Animator (auto-detected in children if left empty)
-    [SerializeField] private string isMovingParam = "IsMoving"; // Boolean parameter name in your Animator Controller
+    [SerializeField] private Animator animator;
+    [SerializeField] private string isMovingParam = "IsMoving";
+    [SerializeField] private string isAttackingParam = "isAttacking"; // Matches AttackController
 
     [Header("Patrol Settings")]
     [SerializeField] private float patrolRadius = 10f;
     [SerializeField] private float patrolWaitTime = 2f;
 
-    [Header("Detection Settings")]
+    [Header("Detection & Combat Distances")]
     [SerializeField] private float detectionRadius = 6f;
-    [SerializeField] private float stoppingDistanceFromTarget = 1.5f;
+    [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private float stopAttackDistance = 2.0f; // Buffer distance before breaking off attack
+
+    [Header("Attack Settings")]
+    [SerializeField] private int fallbackDamage = 10;
+    [SerializeField] private float attackCooldown = 1.5f;
+
+    public Transform targetToAttack; // Mirrors AttackController.targetToAttack
 
     private NavMeshAgent agent;
     private Vector3 spawnPosition;
-    private Transform currentTarget;
     private float waitTimer;
+    private float attackTimer;
     private bool wasChasing;
+    private bool isAttacking;
+    private int enemyDamage;
+
     private int isMovingHash;
+    private int isAttackingHash;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
 
-        // Automatically find the Animator on the child Mixamo model if not manually assigned
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
         }
 
-        // Convert parameter name to hash for better performance
         isMovingHash = Animator.StringToHash(isMovingParam);
+        isAttackingHash = Animator.StringToHash(isAttackingParam);
     }
 
     private void Start()
@@ -48,6 +59,11 @@ public class EnemyAI : MonoBehaviour
         if (enemyInfo != null)
         {
             agent.speed = enemyInfo.unitSpeed;
+            enemyDamage = enemyInfo.unitDamage;
+        }
+        else
+        {
+            enemyDamage = fallbackDamage;
         }
 
         PickNewPatrolPoint();
@@ -55,15 +71,32 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        DetectClosestUnit();
-
-        if (currentTarget != null)
+        // Clear reference if the target unit died and was destroyed
+        if (targetToAttack == null)
         {
-            wasChasing = true;
-            ApproachTarget();
+            isAttacking = false;
+            DetectClosestUnit();
         }
         else
         {
+            // Verify the target is still inside the enemy's patrol territory
+            float targetDistFromSpawnSqr = (targetToAttack.position - spawnPosition).sqrMagnitude;
+            if (targetDistFromSpawnSqr > patrolRadius * patrolRadius)
+            {
+                targetToAttack = null;
+                isAttacking = false;
+            }
+        }
+
+        if (targetToAttack != null)
+        {
+            wasChasing = true;
+            HandleCombatAndApproach();
+        }
+        else
+        {
+            isAttacking = false;
+
             if (wasChasing)
             {
                 wasChasing = false;
@@ -75,15 +108,6 @@ public class EnemyAI : MonoBehaviour
         }
 
         UpdateAnimation();
-    }
-
-    private void UpdateAnimation()
-    {
-        if (animator == null) return;
-
-        // True when the agent has a velocity (patrolling or chasing), false when waiting or stopped at target
-        bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
-        animator.SetBool(isMovingHash, isMoving);
     }
 
     private void DetectClosestUnit()
@@ -99,7 +123,6 @@ public class EnemyAI : MonoBehaviour
             Unit unit = hit.GetComponent<Unit>();
             if (unit != null)
             {
-                // Ignore units outside the enemy's patrol radius
                 float distFromSpawnSqr = (hit.transform.position - spawnPosition).sqrMagnitude;
                 if (distFromSpawnSqr > patrolRadiusSqr)
                 {
@@ -115,26 +138,69 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        currentTarget = closestUnit;
+        targetToAttack = closestUnit;
     }
 
-    private void ApproachTarget()
+    private void HandleCombatAndApproach()
     {
-        if (currentTarget == null) return;
+        if (targetToAttack == null) return;
 
-        agent.stoppingDistance = stoppingDistanceFromTarget;
-        agent.SetDestination(currentTarget.position);
+        float distanceToTarget = Vector3.Distance(transform.position, targetToAttack.position);
 
-        Vector3 directionToTarget = (currentTarget.position - transform.position).normalized;
+        // Smoothly rotate toward the target whether approaching or attacking
+        Vector3 directionToTarget = (targetToAttack.position - transform.position).normalized;
         directionToTarget.y = 0f;
         if (directionToTarget != Vector3.zero)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(directionToTarget), Time.deltaTime * 8f);
         }
+
+        // Hysteresis check: enter attack at attackRange, exit attack only if target moves past stopAttackDistance
+        if (!isAttacking && distanceToTarget <= attackRange)
+        {
+            isAttacking = true;
+        }
+        else if (isAttacking && distanceToTarget > stopAttackDistance)
+        {
+            isAttacking = false;
+        }
+
+        if (isAttacking)
+        {
+            // Stop moving while swinging/attacking
+            agent.isStopped = true;
+            agent.ResetPath();
+
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackCooldown)
+            {
+                attackTimer = 0f;
+                DealDamageToTarget();
+            }
+        }
+        else
+        {
+            // Resume pursuing the target
+            agent.isStopped = false;
+            agent.stoppingDistance = attackRange * 0.9f;
+            agent.SetDestination(targetToAttack.position);
+        }
+    }
+
+    public void DealDamageToTarget()
+    {
+        if (targetToAttack == null) return;
+
+        Unit targetUnit = targetToAttack.GetComponent<Unit>();
+        if (targetUnit != null)
+        {
+            targetUnit.TakeDamage(enemyDamage);
+        }
     }
 
     private void Patrol()
     {
+        agent.isStopped = false;
         agent.stoppingDistance = 0f;
 
         if (!agent.pathPending && agent.remainingDistance <= 0.25f)
@@ -159,13 +225,32 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    private void UpdateAnimation()
+    {
+        if (animator == null) return;
+
+        bool isMoving = !isAttacking && agent.velocity.sqrMagnitude > 0.05f;
+        animator.SetBool(isMovingHash, isMoving);
+        animator.SetBool(isAttackingHash, isAttacking);
+    }
+
     private void OnDrawGizmosSelected()
     {
+        // Yellow = Patrol Territory
         Gizmos.color = Color.yellow;
         Vector3 center = Application.isPlaying ? spawnPosition : transform.position;
         Gizmos.DrawWireSphere(center, patrolRadius);
 
-        Gizmos.color = Color.red;
+        // Cyan = Detection Radius
+        Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+        // Red = Attack Range
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        // Blue = Stop Attack Distance
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, stopAttackDistance);
     }
 }

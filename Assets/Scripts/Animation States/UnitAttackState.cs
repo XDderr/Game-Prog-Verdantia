@@ -5,59 +5,69 @@ public class UnitAttackState : StateMachineBehaviour
 {
     NavMeshAgent agent;
     AttackController attackController;
+    UnitMovement unitMovement;
 
     public float stopAttackingDistance = 1.2f;
 
-    public float attackRate = 1f;
-    private float attackTimer;  
-    //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       agent = animator.GetComponent<NavMeshAgent>();
-       attackController = animator.GetComponent<AttackController>();
-       attackController.SetAttackMaterial();
+        agent = animator.GetComponentInParent<NavMeshAgent>();
+        attackController = animator.GetComponentInParent<AttackController>();
+        unitMovement = animator.GetComponentInParent<UnitMovement>();
+
+        if (attackController != null)
+        {
+            attackController.SetAttackMaterial();
+        }
+
+        // Stop the unit in place while playing the attack animation
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
     }
 
-    //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       if(attackController.targetToAttack != null && animator.transform.GetComponent<UnitMovement>().isCommandedtoMove == false){
+        if (attackController == null || attackController.targetToAttack == null)
+        {
+            animator.SetBool("isAttacking", false);
+            return;
+        }
+
+        if (unitMovement != null && !unitMovement.isCommandedtoMove)
+        {
             LookAtTarget();
-            //move towards enemy
-            agent.SetDestination(attackController.targetToAttack.position);
 
-            if(attackTimer <= 0){
-                Attack();
-                attackTimer = 1f / attackRate;
-            }
-            else{
-                attackTimer -= Time.deltaTime;
-            }
-
-            //should unit still attack
-            float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
-            if(distanceFromTarget > stopAttackingDistance || attackController.targetToAttack == null){
+            float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, agent.transform.position);
+            if (distanceFromTarget > stopAttackingDistance)
+            {
                 animator.SetBool("isAttacking", false);
             }
-       }
-    }   
+        }
+        else if (unitMovement != null && unitMovement.isCommandedtoMove)
+        {
+            animator.SetBool("isAttacking", false);
+        }
+    }
 
-    private void LookAtTarget(){
+    private void LookAtTarget()
+    {
         Vector3 direction = attackController.targetToAttack.position - agent.transform.position;
-        agent.transform.rotation = Quaternion.LookRotation(direction);
-
-        var yRotation = agent.transform.eulerAngles.y;
-        agent.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        direction.y = 0f;
+        if (direction != Vector3.zero)
+        {
+            agent.transform.rotation = Quaternion.LookRotation(direction);
+        }
     }
 
-    public void Attack(){
-        var damageToInflict = attackController.unitDamage;
-        attackController.targetToAttack.GetComponent<Unit>().TakeDamage(damageToInflict);
-    }
-
-    //OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       
+        // Resume movement capability when leaving the attack state
+        if (agent != null)
+        {
+            agent.isStopped = false;
+        }
     }
 }
