@@ -13,6 +13,12 @@ public class UIManager : MonoBehaviour
         buildButton.onClick.AddListener(() => Construct(0));
     }
 
+    private void Update(){
+        if(Input.GetKeyDown("p")){
+            Construct(0);
+        }
+    }
+
     private void Construct(int id)
     {
         Debug.Log("clicked");
