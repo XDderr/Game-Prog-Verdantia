@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58835b095a12d24a82c5e2d3960eb71, type: 3}
   m_Name: Praetor Lillard
   m_EditorClassIdentifier: 
-  unitName: Praetor Lillard
-  health: 5000
-  unitSpeed: 7
-  unitDamage: 15
+  unitName: Vanguard Lillard
+  health: 25
+  unitSpeed: 2
+  unitDamage: 5
   unitIcon: {fileID: 21300000, guid: 9c752d9c2a61221419f5b0373b06c9f0, type: 3}
