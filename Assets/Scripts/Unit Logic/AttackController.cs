@@ -12,13 +12,42 @@ public class AttackController : MonoBehaviour
 
     public int unitDamage;
 
+    [Header("Attack Timing")]
+    [Tooltip("Enable if using a Mixamo Animation Event to call DealDamage(). Disable to use attackCooldown timer.")]
+    public bool useAnimationEvent = false;
+    public float attackCooldown = 1.2f;
+    private float attackTimer;
+
     void Start()
     {
         unitInt = GetComponent<Unit>();
-        unitDamage = unitInt.unitInfo.unitDamage;
-        animator = GetComponentInChildren<Animator>(); // Finds Animator on child Mixamo model
+        if (unitInt != null && unitInt.unitInfo != null)
+        {
+            unitDamage = unitInt.unitInfo.unitDamage;
+        }
+        animator = GetComponentInChildren<Animator>();
     }
-    
+
+    private void Update()
+    {
+        if (useAnimationEvent) return;
+
+        // Timer-based damage when the unit is actively in the attacking animation state
+        if (animator != null && animator.GetBool("isAttacking") && targetToAttack != null)
+        {
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackCooldown)
+            {
+                attackTimer = 0f;
+                DealDamage();
+            }
+        }
+        else
+        {
+            attackTimer = 0f;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy") && targetToAttack == null)
@@ -36,16 +65,35 @@ public class AttackController : MonoBehaviour
         }
     }
 
-    // Called by the Animation Event on the exact impact frame of the attack clip
     public void DealDamage()
     {
-        if (targetToAttack == null) return;
+        if (targetToAttack == null)
+        {
+            Debug.LogWarning($"{gameObject.name}: DealDamage called, but targetToAttack is null.");
+            return;
+        }
 
-        Unit targetUnit = targetToAttack.GetComponent<Unit>();
+        // Check parent chain first, then children (in case targetToAttack is a root wrapper or child collider)
+        EnemyAI targetEnemy = targetToAttack.GetComponentInParent<EnemyAI>();
+        if (targetEnemy == null)
+        {
+            targetEnemy = targetToAttack.GetComponentInChildren<EnemyAI>();
+        }
+
+        if (targetEnemy != null)
+        {
+            targetEnemy.TakeDamage(unitDamage);
+            return;
+        }
+
+        Unit targetUnit = targetToAttack.GetComponentInParent<Unit>();
         if (targetUnit != null)
         {
             targetUnit.TakeDamage(unitDamage);
+            return;
         }
+
+        Debug.LogWarning($"{gameObject.name}: Hit {targetToAttack.name}, but found no EnemyAI or Unit component on it!");
     }
 
     public void SetIdleMaterial()

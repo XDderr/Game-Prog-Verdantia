@@ -3764,6 +3764,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Demorgian (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 8904712127762694381, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -45.488396
@@ -3859,6 +3867,14 @@ PrefabInstance:
     - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
       propertyPath: m_Name
       value: Demorgian (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8904712127762694381, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4833,6 +4849,10 @@ PrefabInstance:
     - target: {fileID: 3871368339171905115, guid: 677b185ca65119b4f8d59b2ccfe71a04, type: 3}
       propertyPath: m_Name
       value: Asset & Terrain
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871368339171905115, guid: 677b185ca65119b4f8d59b2ccfe71a04, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 3871368339171905115, guid: 677b185ca65119b4f8d59b2ccfe71a04, type: 3}
       propertyPath: m_IsActive
@@ -7507,7 +7527,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7360114798693824578, guid: b6427c523c2ac674389654dce34fb61f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -11230,6 +11251,10 @@ PrefabInstance:
     - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8131306494438726231, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8314514037581223735, guid: 50d823e2c5668ec45b32ed6531c95d4a, type: 3}
       propertyPath: m_Layer

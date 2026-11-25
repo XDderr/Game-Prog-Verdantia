@@ -5,13 +5,14 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     [Header("Data & References")]
-    [SerializeField] private UnitInfo enemyInfo; // Pulls unitSpeed and unitDamage
+    [SerializeField] private UnitInfo enemyInfo; // Pulls health, unitSpeed, and unitDamage
     [SerializeField] private LayerMask playerUnitLayer;
+    [SerializeField] private HealthTracker healthTracker; // Optional: assign if enemy has a world-space health bar
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private string isMovingParam = "IsMoving";
-    [SerializeField] private string isAttackingParam = "isAttacking"; // Matches AttackController
+    [SerializeField] private string isAttackingParam = "isAttacking";
 
     [Header("Patrol Settings")]
     [SerializeField] private float patrolRadius = 10f;
@@ -20,13 +21,14 @@ public class EnemyAI : MonoBehaviour
     [Header("Detection & Combat Distances")]
     [SerializeField] private float detectionRadius = 6f;
     [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float stopAttackDistance = 2.0f; // Buffer distance before breaking off attack
+    [SerializeField] private float stopAttackDistance = 2.0f;
 
-    [Header("Attack Settings")]
+    [Header("Health & Attack Settings")]
+    [SerializeField] private float fallbackMaxHealth = 100f;
     [SerializeField] private int fallbackDamage = 10;
     [SerializeField] private float attackCooldown = 1.5f;
 
-    public Transform targetToAttack; // Mirrors AttackController.targetToAttack
+    public Transform targetToAttack;
 
     private NavMeshAgent agent;
     private Vector3 spawnPosition;
@@ -34,6 +36,9 @@ public class EnemyAI : MonoBehaviour
     private float attackTimer;
     private bool wasChasing;
     private bool isAttacking;
+
+    private float maxHealth;
+    private float currentHealth;
     private int enemyDamage;
 
     private int isMovingHash;
@@ -60,18 +65,22 @@ public class EnemyAI : MonoBehaviour
         {
             agent.speed = enemyInfo.unitSpeed;
             enemyDamage = enemyInfo.unitDamage;
+            maxHealth = enemyInfo.health;
         }
         else
         {
             enemyDamage = fallbackDamage;
+            maxHealth = fallbackMaxHealth;
         }
+
+        currentHealth = maxHealth;
+        UpdateHealthUI();
 
         PickNewPatrolPoint();
     }
 
     private void Update()
     {
-        // Clear reference if the target unit died and was destroyed
         if (targetToAttack == null)
         {
             isAttacking = false;
@@ -79,7 +88,6 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Verify the target is still inside the enemy's patrol territory
             float targetDistFromSpawnSqr = (targetToAttack.position - spawnPosition).sqrMagnitude;
             if (targetDistFromSpawnSqr > patrolRadius * patrolRadius)
             {
@@ -120,20 +128,20 @@ public class EnemyAI : MonoBehaviour
 
         foreach (Collider hit in hits)
         {
-            Unit unit = hit.GetComponent<Unit>();
+            Unit unit = hit.GetComponentInParent<Unit>();
             if (unit != null)
             {
-                float distFromSpawnSqr = (hit.transform.position - spawnPosition).sqrMagnitude;
+                float distFromSpawnSqr = (unit.transform.position - spawnPosition).sqrMagnitude;
                 if (distFromSpawnSqr > patrolRadiusSqr)
                 {
                     continue;
                 }
 
-                float distSqr = (hit.transform.position - transform.position).sqrMagnitude;
+                float distSqr = (unit.transform.position - transform.position).sqrMagnitude;
                 if (distSqr < closestDistanceSqr)
                 {
                     closestDistanceSqr = distSqr;
-                    closestUnit = hit.transform;
+                    closestUnit = unit.transform;
                 }
             }
         }
@@ -145,9 +153,13 @@ public class EnemyAI : MonoBehaviour
     {
         if (targetToAttack == null) return;
 
-        float distanceToTarget = Vector3.Distance(transform.position, targetToAttack.position);
+        Collider targetCollider = targetToAttack.GetComponentInChildren<Collider>();
+        Vector3 closestPoint = (targetCollider != null)
+            ? targetCollider.ClosestPoint(transform.position)
+            : targetToAttack.position;
 
-        // Smoothly rotate toward the target whether approaching or attacking
+        float distanceToTarget = Vector3.Distance(closestPoint, transform.position);
+
         Vector3 directionToTarget = (targetToAttack.position - transform.position).normalized;
         directionToTarget.y = 0f;
         if (directionToTarget != Vector3.zero)
@@ -155,7 +167,6 @@ public class EnemyAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(directionToTarget), Time.deltaTime * 8f);
         }
 
-        // Hysteresis check: enter attack at attackRange, exit attack only if target moves past stopAttackDistance
         if (!isAttacking && distanceToTarget <= attackRange)
         {
             isAttacking = true;
@@ -167,7 +178,6 @@ public class EnemyAI : MonoBehaviour
 
         if (isAttacking)
         {
-            // Stop moving while swinging/attacking
             agent.isStopped = true;
             agent.ResetPath();
 
@@ -180,22 +190,60 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Resume pursuing the target
             agent.isStopped = false;
-            agent.stoppingDistance = attackRange * 0.9f;
+            agent.stoppingDistance = attackRange * 0.8f;
             agent.SetDestination(targetToAttack.position);
         }
     }
 
+    // Deals damage to the targeted player Unit (can also be called via Animation Event)
     public void DealDamageToTarget()
     {
         if (targetToAttack == null) return;
 
-        Unit targetUnit = targetToAttack.GetComponent<Unit>();
+        Unit targetUnit = targetToAttack.GetComponentInParent<Unit>();
         if (targetUnit != null)
         {
             targetUnit.TakeDamage(enemyDamage);
         }
+    }
+
+    // Receives damage from player Units and logs remaining health
+    public void TakeDamage(float damageToInflict)
+    {
+        currentHealth -= damageToInflict;
+        currentHealth = Mathf.Max(0f, currentHealth);
+
+        string enemyName = (enemyInfo != null && !string.IsNullOrEmpty(enemyInfo.unitName))
+            ? enemyInfo.unitName
+            : gameObject.name;
+
+        Debug.Log($"{enemyName} took {damageToInflict} damage! Health remaining: {currentHealth}/{maxHealth}");
+
+        UpdateHealthUI();
+
+        if (currentHealth <= 0f)
+        {
+            Die();
+        }
+    }
+
+    private void UpdateHealthUI()
+    {
+        if (healthTracker != null)
+        {
+            healthTracker.UpdateSliderValue(currentHealth, maxHealth);
+        }
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
     }
 
     private void Patrol()
@@ -236,20 +284,16 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Yellow = Patrol Territory
         Gizmos.color = Color.yellow;
         Vector3 center = Application.isPlaying ? spawnPosition : transform.position;
         Gizmos.DrawWireSphere(center, patrolRadius);
 
-        // Cyan = Detection Radius
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
 
-        // Red = Attack Range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        // Blue = Stop Attack Distance
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, stopAttackDistance);
     }

@@ -144,7 +144,14 @@ public class UnitSelection : MonoBehaviour
                     Transform target = hit.transform;
                     foreach(GameObject unit in unitsSelected){
                         if(unit.GetComponent<AttackController>()){
-                            unit.GetComponent<AttackController>().targetToAttack = target;
+                            if (unit.TryGetComponent<AttackController>(out var attackCtrl))
+                            {
+                                attackCtrl.targetToAttack = target;
+                            }
+                            if (unit.TryGetComponent<UnitMovement>(out var movement))
+                            {
+                                movement.isCommandedtoMove = false;
+                            }
                         }
                     }
                 }       

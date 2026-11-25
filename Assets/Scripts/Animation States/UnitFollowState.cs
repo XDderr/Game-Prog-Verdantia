@@ -1,40 +1,64 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class UnitFollowState : StateMachineBehaviour
 {
     AttackController attackController;
-    UnityEngine.AI.NavMeshAgent agent;
-    public float attackingDistance = 1f;
+    NavMeshAgent agent;
+    UnitMovement unitMovement;
 
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    public float attackingDistance = 2.0f;
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       // In UnitFollowState.cs OnStateEnter:
         attackController = animator.GetComponentInParent<AttackController>();
-        agent = animator.GetComponentInParent<UnityEngine.AI.NavMeshAgent>();
-       attackController.SetFollowMaterial();
+        agent = animator.GetComponentInParent<NavMeshAgent>();
+        unitMovement = animator.GetComponentInParent<UnitMovement>();
+
+        if (attackController != null)
+        {
+            attackController.SetFollowMaterial();
+        }
     }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Transition to Idle
-        if(attackController.targetToAttack == null){
+        if (attackController == null || attackController.targetToAttack == null)
+        {
             animator.SetBool("isFollowing", false);
+            animator.SetBool("isAttacking", false);
+            return;
         }
-        else{
-            if(animator.transform.GetComponent<UnitMovement>().isCommandedtoMove == false){
-                //Moving Unit towards Enemy
-                agent.SetDestination(attackController.targetToAttack.position);
-                animator.transform.LookAt(attackController.targetToAttack);
 
-                //Transition to Attack State
-                float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
-                if(distanceFromTarget < attackingDistance){
-                    agent.SetDestination(animator.transform.position);
-                    animator.SetBool("isAttacking", true);
-                }
-            }
+        // Clear any lingering move command while actively pursuing a target
+        if (unitMovement != null && unitMovement.isCommandedtoMove)
+        {
+            unitMovement.isCommandedtoMove = false;
+        }
+
+        agent.isStopped = false;
+        agent.stoppingDistance = attackingDistance * 0.8f;
+        agent.SetDestination(attackController.targetToAttack.position);
+
+        Vector3 lookPos = new Vector3(
+            attackController.targetToAttack.position.x,
+            agent.transform.position.y,
+            attackController.targetToAttack.position.z
+        );
+        agent.transform.LookAt(lookPos);
+
+        Collider targetCollider = attackController.targetToAttack.GetComponentInChildren<Collider>();
+        Vector3 closestPoint = (targetCollider != null)
+            ? targetCollider.ClosestPoint(agent.transform.position)
+            : attackController.targetToAttack.position;
+
+        float distanceFromTarget = Vector3.Distance(closestPoint, agent.transform.position);
+
+        if (distanceFromTarget <= attackingDistance)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            animator.SetBool("isAttacking", true);
         }
     }
 }
