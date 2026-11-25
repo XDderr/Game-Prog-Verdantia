@@ -33,6 +33,7 @@ public class UnitAttackState : StateMachineBehaviour
         if (attackController == null || attackController.targetToAttack == null)
         {
             animator.SetBool("isAttacking", false);
+            animator.SetBool("isFollowing", false);
             return;
         }
 
