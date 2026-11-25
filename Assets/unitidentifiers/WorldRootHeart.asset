@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldRootHeart
   m_EditorClassIdentifier: 
   unitName: WorldRootHeart
-  health: 5
+  health: 50
   unitSpeed: 0
   unitDamage: 0
   unitIcon: {fileID: 0}
