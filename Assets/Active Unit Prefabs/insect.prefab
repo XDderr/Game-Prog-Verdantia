@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 46504882042e76340bd41fcc344f3338, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -29.39201
+      value: -23.35
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 46504882042e76340bd41fcc344f3338, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 46504882042e76340bd41fcc344f3338, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -90.22235
+      value: -87.51
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 46504882042e76340bd41fcc344f3338, type: 3}
       propertyPath: m_LocalRotation.w
@@ -55,6 +55,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 46504882042e76340bd41fcc344f3338, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 46504882042e76340bd41fcc344f3338, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -141,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22db28639276f5c458147099bf0dbc43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyInfo: {fileID: 11400000, guid: 03e4cb1446ea06244965f1dd42177e31, type: 2}
+  enemyInfo: {fileID: 11400000, guid: a06726295bfdc1346b8ccdac5d5fcd2e, type: 2}
   playerUnitLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -158,6 +162,8 @@ MonoBehaviour:
   fallbackDamage: 10
   attackCooldown: 1.5
   targetToAttack: {fileID: 0}
+  dieTriggerParam: Die
+  deathDestroyDelay: 3
 --- !u!54 &1929907320878171470
 Rigidbody:
   m_ObjectHideFlags: 0

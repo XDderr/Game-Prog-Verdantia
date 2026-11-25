@@ -44,6 +44,12 @@ public class EnemyAI : MonoBehaviour
     private int isMovingHash;
     private int isAttackingHash;
 
+    [Header("Death Settings")]
+    [SerializeField] private string dieTriggerParam = "Die"; // Or set a Bool "isDead" if your Animator uses a bool
+    [SerializeField] private float deathDestroyDelay = 3f; // Match the length of your Mixamo death clip
+    private bool isDead = false;
+    private int dieTriggerHash;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -55,6 +61,7 @@ public class EnemyAI : MonoBehaviour
 
         isMovingHash = Animator.StringToHash(isMovingParam);
         isAttackingHash = Animator.StringToHash(isAttackingParam);
+        dieTriggerHash = Animator.StringToHash(dieTriggerParam);
     }
 
     private void Start()
@@ -81,6 +88,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        if (isDead) return;
         if (targetToAttack == null)
         {
             isAttacking = false;
@@ -211,6 +219,8 @@ public class EnemyAI : MonoBehaviour
     // Receives damage from player Units and logs remaining health
     public void TakeDamage(float damageToInflict)
     {
+        if (isDead) return;
+
         currentHealth -= damageToInflict;
         currentHealth = Mathf.Max(0f, currentHealth);
 
@@ -238,7 +248,41 @@ public class EnemyAI : MonoBehaviour
 
     private void Die()
     {
-        Destroy(gameObject);
+        if (isDead) return;
+        isDead = true;
+        targetToAttack = null;
+        isAttacking = false;
+
+        // 1. Halt NavMeshAgent movement immediately
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            agent.enabled = false;
+        }
+
+        // 2. Disable colliders & remove from 'attackable' layer so player units stop targeting the corpse
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        foreach (Collider col in GetComponentsInChildren<Collider>())
+        {
+            col.enabled = false;
+        }
+
+        // 3. Hide world-space health bar if assigned
+        if (healthTracker != null)
+        {
+            healthTracker.gameObject.SetActive(false);
+        }
+
+        // 4. Play death animation and schedule cleanup
+        if (animator != null)
+        {
+            animator.SetBool(isMovingHash, false);
+            animator.SetBool(isAttackingHash, false);
+            animator.SetTrigger(dieTriggerHash);
+        }
+
+        Destroy(gameObject, deathDestroyDelay);
     }
 
     public float GetCurrentHealth()

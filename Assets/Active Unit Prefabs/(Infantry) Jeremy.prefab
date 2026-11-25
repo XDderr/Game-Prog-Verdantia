@@ -84,7 +84,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -29.645555
+      value: -27.9
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
       propertyPath: m_LocalPosition.y
@@ -92,7 +92,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -95.24639
+      value: -106.717255
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
       propertyPath: m_LocalRotation.w
@@ -171,6 +171,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6600854650413381540}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2091236219722883828}
   m_SourcePrefab: {fileID: 100100000, guid: 28cc93ead7fe1f0428da4796f2c2a235, type: 3}
 --- !u!4 &4622325812695409705 stripped
 Transform:
@@ -222,6 +225,8 @@ MonoBehaviour:
   followStateMaterial: {fileID: 0}
   attackStateMaterial: {fileID: 0}
   unitDamage: 0
+  useAnimationEvent: 0
+  attackCooldown: 1.2
 --- !u!114 &690237640865749618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,6 +241,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitInfo: {fileID: 11400000, guid: 1c0a9eb2efae9cc4f97e55a3932222cf, type: 2}
   healthTracker: {fileID: 8527949349574191622}
+  dieTriggerParam: Die
+  deathDestroyDelay: 3
 --- !u!114 &9163083294151157792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,6 +446,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2091236219722883828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5435313113805389459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29495015030a657488cf44268a1c2dc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8955890949755124643
 PrefabInstance:
   m_ObjectHideFlags: 0

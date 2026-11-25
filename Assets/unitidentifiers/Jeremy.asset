@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58835b095a12d24a82c5e2d3960eb71, type: 3}
   m_Name: Jeremy
   m_EditorClassIdentifier: 
-  unitName: Jeremy
+  unitName: Infantry Jeremy
   health: 15
   unitSpeed: 2
   unitDamage: 3

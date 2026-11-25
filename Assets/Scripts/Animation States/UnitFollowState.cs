@@ -30,14 +30,16 @@ public class UnitFollowState : StateMachineBehaviour
             return;
         }
 
-        // Clear any lingering move command while actively pursuing a target
         if (unitMovement != null && unitMovement.isCommandedtoMove)
         {
-            unitMovement.isCommandedtoMove = false;
+            animator.SetBool("isFollowing", false);
+            animator.SetBool("isAttacking", false);
+            animator.SetBool("isMoving", true);
+            return;
         }
 
         agent.isStopped = false;
-        agent.stoppingDistance = attackingDistance * 0.8f;
+        agent.stoppingDistance = attackingDistance * 0.75f;
         agent.SetDestination(attackController.targetToAttack.position);
 
         Vector3 lookPos = new Vector3(
@@ -47,12 +49,7 @@ public class UnitFollowState : StateMachineBehaviour
         );
         agent.transform.LookAt(lookPos);
 
-        Collider targetCollider = attackController.targetToAttack.GetComponentInChildren<Collider>();
-        Vector3 closestPoint = (targetCollider != null)
-            ? targetCollider.ClosestPoint(agent.transform.position)
-            : attackController.targetToAttack.position;
-
-        float distanceFromTarget = Vector3.Distance(closestPoint, agent.transform.position);
+        float distanceFromTarget = GetHorizontalDistanceToTarget(agent.transform.position, attackController.targetToAttack);
 
         if (distanceFromTarget <= attackingDistance)
         {
@@ -60,5 +57,30 @@ public class UnitFollowState : StateMachineBehaviour
             agent.ResetPath();
             animator.SetBool("isAttacking", true);
         }
+    }
+
+    public static float GetHorizontalDistanceToTarget(Vector3 unitPos, Transform target)
+    {
+        // Prefer root collider first, then child collider, ignoring triggers
+        Collider targetCol = target.GetComponent<Collider>();
+        if (targetCol == null || targetCol.isTrigger)
+        {
+            targetCol = target.GetComponentInChildren<Collider>();
+        }
+
+        Vector3 targetPoint = target.position;
+
+        // ClosestPoint only supports Box, Sphere, Capsule, or Convex MeshColliders
+        if (targetCol != null && !targetCol.isTrigger &&
+           (targetCol is BoxCollider || targetCol is SphereCollider || targetCol is CapsuleCollider ||
+           (targetCol is MeshCollider meshCol && meshCol.convex)))
+        {
+            targetPoint = targetCol.ClosestPoint(unitPos);
+        }
+
+        // Measure flat XZ distance so tall buildings/trees don't inflate distance via Y height
+        Vector2 flatUnit = new Vector2(unitPos.x, unitPos.z);
+        Vector2 flatTarget = new Vector2(targetPoint.x, targetPoint.z);
+        return Vector2.Distance(flatUnit, flatTarget);
     }
 }

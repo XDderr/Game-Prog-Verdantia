@@ -15,5 +15,5 @@ MonoBehaviour:
   unitName: FN Apollo
   health: 10
   unitSpeed: 4
-  unitDamage: 1
+  unitDamage: 2
   unitIcon: {fileID: 0}

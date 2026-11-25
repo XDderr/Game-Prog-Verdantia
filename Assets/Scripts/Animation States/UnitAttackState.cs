@@ -7,7 +7,7 @@ public class UnitAttackState : StateMachineBehaviour
     AttackController attackController;
     UnitMovement unitMovement;
 
-    public float stopAttackingDistance = 1.2f;
+    public float stopAttackingDistance = 3.0f;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -20,7 +20,6 @@ public class UnitAttackState : StateMachineBehaviour
             attackController.SetAttackMaterial();
         }
 
-        // Stop the unit in place while playing the attack animation
         if (agent != null)
         {
             agent.isStopped = true;
@@ -37,17 +36,18 @@ public class UnitAttackState : StateMachineBehaviour
             return;
         }
 
-        if (unitMovement != null && !unitMovement.isCommandedtoMove)
+        if (unitMovement != null && unitMovement.isCommandedtoMove)
         {
-            LookAtTarget();
-
-            float distanceFromTarget = Vector3.Distance(attackController.targetToAttack.position, agent.transform.position);
-            if (distanceFromTarget > stopAttackingDistance)
-            {
-                animator.SetBool("isAttacking", false);
-            }
+            animator.SetBool("isAttacking", false);
+            animator.SetBool("isFollowing", false);
+            animator.SetBool("isMoving", true);
+            return;
         }
-        else if (unitMovement != null && unitMovement.isCommandedtoMove)
+
+        LookAtTarget();
+
+        float distanceFromTarget = UnitFollowState.GetHorizontalDistanceToTarget(agent.transform.position, attackController.targetToAttack);
+        if (distanceFromTarget > stopAttackingDistance)
         {
             animator.SetBool("isAttacking", false);
         }
@@ -65,7 +65,6 @@ public class UnitAttackState : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // Resume movement capability when leaving the attack state
         if (agent != null)
         {
             agent.isStopped = false;
