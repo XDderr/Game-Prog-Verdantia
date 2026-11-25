@@ -2719,10 +2719,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5113715467473533816, guid: 03e045706c80f654cb4b49cea722b7fb, type: 3}
-      propertyPath: m_Radius
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5435313113805389459, guid: 03e045706c80f654cb4b49cea722b7fb, type: 3}
       propertyPath: m_Name
       value: (Infantry) Jeremy
@@ -11814,10 +11810,6 @@ PrefabInstance:
     - target: {fileID: 2931674760967350647, guid: fc11509e4879b684487652905de4646b, type: 3}
       propertyPath: m_Name
       value: (Vanguard) Lillard
-      objectReference: {fileID: 0}
-    - target: {fileID: 4253990418563493903, guid: fc11509e4879b684487652905de4646b, type: 3}
-      propertyPath: deathDestroyDelay
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4663543824137199720, guid: fc11509e4879b684487652905de4646b, type: 3}
       propertyPath: m_AnchorMax.x
